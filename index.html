@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python AI 学习助手</title>
+<meta name="description" content="Python AI 学习助手 —— 在浏览器里直接运行 Python 3，内置 110 道分级练习题、自动判题、学习路线、课程讲解与 AI 老师答疑。无需安装任何环境，打开即用。">
+<meta name="theme-color" content="#4f46e5">
+<meta property="og:title" content="Python AI 学习助手">
+<meta property="og:description" content="浏览器里直接跑 Python，110 道分级练习题自动判题，课程讲解 + AI 老师在线答疑，零安装环境。">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f46e5'/%3E%3Ctext x='32' y='43' font-size='28' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'%3EPY%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============ 侧边栏 ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">PY</div>
+      <div class="brand-text">
+        <strong>Python AI 学习助手</strong>
+        <span>边写 · 边练 · 边问</span>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-view="lab">
+        <span class="nav-ico">&#9000;</span> 代码实验室
+      </button>
+      <button class="nav-item" data-view="exercise">
+        <span class="nav-ico">&#9998;</span> 练习题库
+      </button>
+      <button class="nav-item" data-view="chat">
+        <span class="nav-ico">&#128172;</span> AI 答疑
+      </button>
+      <button class="nav-item" data-view="roadmap">
+        <span class="nav-ico">&#128218;</span> 学习路线
+      </button>
+    </nav>
+
+    <!-- ---------- 我的学习（学生成长档案） ---------- -->
+    <div class="profile-card" id="profileCard">
+      <div class="pf-head">
+        <span>我的学习</span>
+        <b class="pf-level lv-beginner" id="pfLevel">初学者</b>
+      </div>
+      <div class="pf-rows">
+        <div class="pf-row"><span>完成题目</span><b id="pfDone">0 / 0</b></div>
+        <div class="pf-row"><span>正确率</span><b id="pfAcc">—</b></div>
+        <div class="pf-row"><span>学习阶段</span><b id="pfStage">阶段1 · Python 认识</b></div>
+      </div>
+      <div class="pf-label">薄弱知识</div>
+      <div class="pf-chips" id="pfWeak"><span class="pf-empty">暂无，继续保持 🎉</span></div>
+      <div class="pf-label">推荐下一课</div>
+      <div class="pf-next" id="pfNext">先做几道题，我来帮你规划 📘</div>
+    </div>
+
+    <div class="runtime" id="runtimeBox">
+      <div class="rt-row">
+        <span class="rt-dot" id="rtDot"></span>
+        <span id="rtText">Python 运行时加载中…</span>
+      </div>
+      <div class="rt-bar"><i id="rtBar"></i></div>
+      <div class="rt-tip" id="rtTip">首次加载需下载约 10MB 运行时，请保持联网</div>
+    </div>
+
+    <div class="progress-card">
+      <div class="pc-head">
+        <span>学习进度</span>
+        <b id="pcRatio">0 / 0</b>
+      </div>
+      <div class="pc-bar"><i id="pcBar"></i></div>
+      <button class="pc-reset" id="pcReset">重置进度</button>
+    </div>
+  </aside>
+
+  <!-- ============ 主区域 ============ -->
+  <main class="main">
+
+    <!-- ---------- 代码实验室 ---------- -->
+    <section class="view active" id="view-lab">
+      <header class="view-head">
+        <div>
+          <h1>代码实验室</h1>
+          <p>在浏览器里直接运行 Python 3，无需安装任何环境。</p>
+        </div>
+        <div class="head-actions">
+          <select id="sampleSelect" class="select">
+            <option value="">加载示例…</option>
+          </select>
+          <button class="btn btn-ghost" id="btnFormatHint">快捷键说明</button>
+        </div>
+      </header>
+
+      <div class="lab">
+        <div class="panel editor-panel">
+          <div class="panel-head">
+            <span class="panel-title">main.py</span>
+            <div class="panel-tools">
+              <button class="btn btn-primary" id="btnRun" disabled>
+                <span id="runLabel">运行</span>
+                <kbd>Ctrl+Enter</kbd>
+              </button>
+              <button class="btn btn-ghost" id="btnClearOut">清空输出</button>
+            </div>
+          </div>
+          <textarea id="editor" spellcheck="false" autocomplete="off">print("Hello, Python!")</textarea>
+          <div class="stdin-row">
+            <label for="stdinInput">标准输入 stdin（每行一条，代码里可用 input() 读取）</label>
+            <textarea id="stdinInput" rows="2" spellcheck="false" placeholder="例如：&#10;5&#10;10"></textarea>
+          </div>
+        </div>
+
+        <div class="panel output-panel">
+          <div class="panel-head">
+            <span class="panel-title">运行结果</span>
+            <span class="panel-meta" id="outMeta"></span>
+          </div>
+          <div class="output" id="output">
+            <div class="out-placeholder">点击「运行」或按 Ctrl+Enter 执行代码</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- 练习题库 ---------- -->
+    <section class="view" id="view-exercise">
+      <header class="view-head">
+        <div>
+          <h1>练习题库</h1>
+          <p>写完点「提交判题」，系统会在浏览器里跑真实测试用例。</p>
+        </div>
+        <select id="catFilter" class="select">
+          <option value="all">全部分类</option>
+        </select>
+      </header>
+
+      <div class="ex-wrap">
+        <div class="ex-list" id="exList"></div>
+
+        <div class="ex-detail" id="exDetail">
+          <div class="ex-empty">← 从左侧选择一道题目开始</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- AI 答疑 ---------- -->
+    <section class="view" id="view-chat">
+      <header class="view-head">
+        <div>
+          <h1>AI 答疑</h1>
+          <p id="chatModeTip">未配置 API 时，使用内置知识库离线回答。</p>
+        </div>
+        <button class="btn btn-ghost" id="btnSettings">模型设置</button>
+      </header>
+      <div class="chat-wrap">
+        <div class="chat-msgs" id="chatMsgs"></div>
+
+        <div class="chat-quick" id="chatQuick"></div>
+
+        <div class="chat-input">
+          <textarea id="chatInput" rows="2" placeholder="描述你的 Python 问题，回车发送（Shift+Enter 换行）"></textarea>
+          <div class="chat-actions">
+            <button class="btn btn-ghost" id="btnAskCode">带上当前代码</button>
+            <button class="btn btn-primary" id="btnSend">发送</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- 课程学习 ---------- -->
+    <section class="view" id="view-lesson">
+      <header class="view-head">
+        <div>
+          <h1 id="lessonHead">课程学习</h1>
+          <p>学习 → 理解 → 练习 → 实践 → 掌握</p>
+        </div>
+        <button class="btn btn-ghost" id="btnLessonBack">← 返回学习路线</button>
+      </header>
+      <div class="lesson" id="lessonBody">
+        <div class="ex-empty">从「学习路线」选择一个带 📘 的知识点开始上课</div>
+      </div>
+    </section>
+
+    <!-- ---------- 学习路线（渐进式课程） ---------- -->
+    <section class="view" id="view-roadmap">
+      <header class="view-head">
+        <div>
+          <h1>学习路线</h1>
+          <p>从零开始的 Python 渐进式课程，按阶段推进，每掌握一个知识点自动解锁下一步。</p>
+        </div>
+      </header>
+      <div class="rm-next">
+        <span class="rm-next-k">推荐下一课</span>
+        <b id="rmNext">先做几道题，我来帮你规划 📘</b>
+      </div>
+      <div id="roadmapList"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ 设置弹窗 ============ -->
+<div class="modal-mask" id="modalMask">
+  <div class="modal">
+    <h3>模型设置</h3>
+    <p class="modal-sub">兼容 OpenAI Chat Completions 接口，配置仅保存在本机浏览器。</p>
+
+    <label class="field">
+      <span>Base URL</span>
+      <input type="text" id="cfgBase" placeholder="https://api.openai.com/v1">
+    </label>
+    <label class="field">
+      <span>API Key</span>
+      <input type="password" id="cfgKey" placeholder="sk-...">
+    </label>
+    <label class="field">
+      <span>模型名称</span>
+      <input type="text" id="cfgModel" placeholder="gpt-4o-mini">
+    </label>
+
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="cfgClear">清除配置（改用离线知识库）</button>
+      <div>
+        <button class="btn btn-ghost" id="cfgCancel">取消</button>
+        <button class="btn btn-primary" id="cfgSave">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
+<script src="assets/exercises.js"></script>
+<script src="assets/courses.js"></script>
+<script src="assets/basic-code.js"></script>
+<script src="assets/lessons.js"></script>
+<script src="assets/kb.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
