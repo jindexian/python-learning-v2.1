@@ -1,0 +1,12 @@
+{
+  "name": "python-learning-assistant",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Python AI 学习助手：浏览器内运行真实 Python，132 道题 + 21 门课程 + AI 教师",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
